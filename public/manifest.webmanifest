@@ -1,0 +1,13 @@
+{
+  "name": "MadaExpress – Livraison express Antananarivo",
+  "short_name": "MadaExpress",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fff6e6",
+  "theme_color": "#0e7a4d",
+  "lang": "fr",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -1,0 +1,197 @@
+@import "tailwindcss";
+
+/*
+ * Identité MadaExpress : épurée et ludique.
+ * Fond clair, beaucoup d'espace, coins arrondis, ombres douces ; les couleurs de Madagascar
+ * (vert ravinala, mangue, lagon, litchi) servent d'accents. Maki reste la mascotte.
+ * Les échelles emerald/slate de Tailwind sont remappées : tous les écrans suivent sans changer leurs classes.
+ */
+@theme {
+  --font-sans: "Nunito", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Fredoka", "Nunito", sans-serif;
+
+  --color-brand: #1f9d5c;      /* vert ravinala */
+  --color-brand-deep: #14703f;
+  --color-sunset: #ff8a4c;     /* papaye */
+  --color-sun: #ffc93c;        /* mangue */
+  --color-lagoon: #2ab0e4;     /* lagon */
+  --color-litchi: #ee4b5a;     /* litchi */
+  --color-guava: #ff9ec0;
+  --color-sand: #fbf8f3;       /* fond */
+  --color-ink: #1f2420;        /* texte */
+  --color-bark: #7a4a2a;       /* écorce de baobab */
+  --color-mint: #e3f6ea;
+  --color-butter: #fff4d1;
+  --color-sky: #e1f3fb;
+  --color-blush: #ffe8ec;
+  --color-peach: #ffeadb;
+
+  /* Principal (ex-vert Tailwind) → vert ravinala */
+  --color-emerald-50: #eefaf3;
+  --color-emerald-100: #d6f2e1;
+  --color-emerald-200: #ade4c3;
+  --color-emerald-300: #76cf9b;
+  --color-emerald-400: #42b776;
+  --color-emerald-500: #27a564;
+  --color-emerald-600: #1f9d5c;
+  --color-emerald-700: #188a50;
+  --color-emerald-800: #14703f;
+  --color-emerald-900: #105833;
+  --color-emerald-950: #08321d;
+
+  /* Neutres → gris chauds, discrets */
+  --color-slate-50: #faf8f5;
+  --color-slate-100: #f3efe9;
+  --color-slate-200: #e9e3da;
+  --color-slate-300: #d6cec2;
+  --color-slate-400: #a59c8f;
+  --color-slate-500: #776e62;
+  --color-slate-600: #5b5349;
+  --color-slate-700: #443e36;
+  --color-slate-800: #2d2924;
+  --color-slate-900: #1f2420;
+  --color-slate-950: #121512;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  background-color: #fbf8f3;
+  color: #1f2420;
+  overscroll-behavior-y: none;
+}
+
+@layer base {
+  h1, h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+}
+
+@utility font-display { font-family: var(--font-display); }
+
+/*
+ * Surfaces. Les noms historiques (ink, ink-card, btn-3d) sont conservés car utilisés dans toutes
+ * les pages ; ils produisent désormais un rendu doux : bordure fine, ombre légère.
+ */
+.ink { border: 1px solid #e9e3da; }
+.ink-card { border: 1px solid #ede7de; box-shadow: 0 1px 2px rgba(31, 36, 32, .04), 0 10px 30px -18px rgba(31, 36, 32, .25); }
+.ink-card-sm { border: 1px solid #ede7de; box-shadow: 0 1px 2px rgba(31, 36, 32, .05); }
+
+.btn-3d {
+  box-shadow: 0 6px 16px -8px rgba(31, 36, 32, .35);
+  transition: transform .18s cubic-bezier(.3, 1.4, .5, 1), box-shadow .18s, background-color .18s;
+}
+.btn-3d:hover { transform: translateY(-2px); box-shadow: 0 10px 22px -10px rgba(31, 36, 32, .45); }
+.btn-3d:active { transform: translateY(0) scale(.97); box-shadow: 0 3px 8px -4px rgba(31, 36, 32, .35); }
+.btn-3d:disabled { transform: none; box-shadow: none; }
+
+/* Carte qui se soulève au survol */
+.tilt-hover { transition: translate .25s cubic-bezier(.3, 1.4, .5, 1), box-shadow .25s; }
+.tilt-hover:hover { translate: 0 -6px; box-shadow: 0 2px 4px rgba(31, 36, 32, .04), 0 22px 40px -22px rgba(31, 36, 32, .4); }
+
+/*
+ * Animations au survol. Propriétés individuelles (scale, rotate, translate) pour se combiner
+ * avec les transformations déjà posées sur l'élément.
+ */
+@keyframes mx-jelly {
+  0%, 100% { scale: 1 1; } 25% { scale: 1.18 .86; } 45% { scale: .9 1.1; }
+  65% { scale: 1.05 .96; } 82% { scale: .98 1.02; }
+}
+@keyframes mx-shake { 0%, 100% { rotate: 0deg; } 25% { rotate: -7deg; } 50% { rotate: 6deg; } 75% { rotate: -3deg; } }
+@keyframes mx-jump { 0%, 100% { translate: 0 0; } 35% { translate: 0 -12px; } 60% { translate: 0 0; } 75% { translate: 0 -3px; } }
+@keyframes mx-flip { 0% { rotate: 0deg; translate: 0 0; } 50% { translate: 0 -30px; } 100% { rotate: 360deg; translate: 0 0; } }
+
+.hover-jelly:hover, .group:hover .group-jelly { animation: mx-jelly .6s ease-in-out; }
+.hover-shake { transform-origin: 50% 100%; }
+.hover-shake:hover, .group:hover .group-shake { animation: mx-shake .55s ease-in-out; }
+.hover-jump:hover, .group:hover .group-jump { animation: mx-jump .6s ease-in-out; }
+.hover-flip:hover { animation: mx-flip .85s cubic-bezier(.3, .7, .4, 1); }
+.group:hover .group-wiggle { animation: mx-shake .55s ease-in-out; }
+
+/* Mascotte */
+@keyframes mx-hop { 0%, 100% { transform: translateY(0); } 30% { transform: translateY(-10px) rotate(-2deg); } 55% { transform: translateY(0); } 65% { transform: translateY(-3px); } }
+.hop { animation: mx-hop 3s ease-in-out infinite; }
+@keyframes mx-wag { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(7deg); } }
+.hop .maki-tail { transform-origin: 108px 168px; animation: mx-wag 1.4s ease-in-out infinite; }
+@keyframes mx-bounce-in { 0% { transform: scale(.6); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+.bounce-in { animation: mx-bounce-in .45s cubic-bezier(.3, 1.6, .5, 1); }
+
+/* Paysage de la bannière : arbres qui se balancent, zébu qui marche */
+@keyframes mx-sway { 0%, 100% { rotate: -1.5deg; } 50% { rotate: 1.5deg; } }
+.sway { transform-origin: 50% 100%; animation: mx-sway 5s ease-in-out infinite; }
+@keyframes mx-walk { 0%, 100% { translate: 0 0; } 50% { translate: 0 -2px; } }
+.walk { animation: mx-walk .6s ease-in-out infinite; }
+
+/* Contour discret autour des silhouettes (baobab, ravinala, zébu) */
+.ink-outline {
+  filter: drop-shadow(1px 0 0 rgba(31, 36, 32, .85)) drop-shadow(-1px 0 0 rgba(31, 36, 32, .85))
+          drop-shadow(0 1px 0 rgba(31, 36, 32, .85)) drop-shadow(0 -1px 0 rgba(31, 36, 32, .85));
+}
+
+/* La charrette traverse la route de gauche à droite, puis revient par la gauche */
+@keyframes mx-cross { from { transform: translateX(-280px); } to { transform: translateX(calc(100vw + 40px)); } }
+.cross { animation: mx-cross 24s linear infinite; }
+.cross:hover { animation-play-state: paused; }
+@keyframes mx-wheel { to { transform: rotate(360deg); } }
+.wheel-spin { transform-box: fill-box; transform-origin: center; animation: mx-wheel 1.1s linear infinite; }
+.cross:hover .wheel-spin, .cross:hover .walk { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hover-jelly:hover, .group:hover .group-jelly, .hover-shake:hover, .group:hover .group-shake,
+  .hover-jump:hover, .group:hover .group-jump, .hover-flip:hover, .group:hover .group-wiggle,
+  .hop, .hop .maki-tail, .bounce-in, .sway, .walk, .cross, .wheel-spin { animation: none; }
+  .tilt-hover, .btn-3d { transition: none; }
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+/* Fenêtres et notifications */
+@keyframes mx-sheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes mx-pop { from { transform: scale(.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes mx-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes mx-push { from { transform: translateY(-120%); } to { transform: translateY(0); } }
+@keyframes mx-pulse { 0% { transform: scale(.6); opacity: .7; } 100% { transform: scale(1.8); opacity: 0; } }
+
+.animate-sheet { animation: mx-sheet .28s cubic-bezier(.2,.8,.2,1); }
+@media (min-width: 640px) { .animate-sheet { animation: mx-pop .2s ease-out; } }
+.animate-fade { animation: mx-fade .2s ease-out; }
+.animate-push { animation: mx-push .35s cubic-bezier(.2,.8,.2,1); }
+
+/* Leaflet */
+.leaflet-container { font-family: inherit; background: #e9e3da; }
+.leaflet-control-attribution { font-size: 10px; }
+.mx-icon { background: none; border: none; }
+
+.mx-pin {
+  width: 40px; height: 40px; border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,.3); border: 3px solid #fff;
+}
+.mx-pin > span { transform: rotate(45deg); font-size: 18px; line-height: 1; }
+.mx-pin-hq { background: #1f9d5c; }
+.mx-pin-home { background: #ee4b5a; }
+
+.mx-rider { position: relative; width: 48px; height: 48px; }
+.mx-rider-pulse {
+  position: absolute; inset: 4px; border-radius: 9999px; background: rgba(37,99,235,.45);
+  animation: mx-pulse 1.8s ease-out infinite;
+}
+.mx-rider-heading {
+  position: absolute; inset: 0; transition: transform .25s linear;
+}
+.mx-rider-heading::before {
+  content: ""; position: absolute; left: 50%; top: -2px; transform: translateX(-50%);
+  border-left: 8px solid transparent; border-right: 8px solid transparent;
+  border-bottom: 12px solid #1d4ed8;
+}
+.mx-rider-body {
+  position: absolute; inset: 8px; border-radius: 9999px; background: #fff;
+  border: 3px solid #1d4ed8; display: flex; align-items: center; justify-content: center;
+  font-size: 17px; overflow: hidden; padding: 2px; box-shadow: 0 4px 10px rgba(0,0,0,.3);
+}

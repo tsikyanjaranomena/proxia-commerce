@@ -1,0 +1,152 @@
+// Schéma compatible SQLite et PostgreSQL : pas d'enum ni de type Json
+// (les statuts sont des chaînes, les objets sont sérialisés en JSON texte).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  phone     String   @unique
+  name      String   @default("")
+  createdAt DateTime @default(now())
+  orders    Order[]
+  claims    Claim[]
+}
+
+model OtpCode {
+  id        Int      @id @default(autoincrement())
+  phone     String
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+}
+
+model Product {
+  id          String  @id
+  name        String
+  category    String
+  price       Int
+  oldPrice    Int?
+  rating      Float
+  reviews     Int
+  stock       Int
+  emoji       String
+  tint        String
+  image       String? // chemin de la photo, ex. /products/xxx.jpg
+  badge       String?
+  description String
+  specs       String // JSON : { "Écran": "6,5\"", ... }
+  tags        String // JSON : ["telephone", ...]
+  position    Int     @default(0) // ordre d'affichage dans la boutique
+  active      Boolean @default(true)
+}
+
+model Rider {
+  id       Int     @id @default(autoincrement())
+  name     String
+  phone    String  @unique
+  codeHash String
+  plate    String
+  moto     String
+  rating   Float
+  trips    Int
+  active   Boolean @default(true)
+  orders   Order[]
+}
+
+model Order {
+  id            Int       @id @default(autoincrement())
+  code          String    @unique // référence publique, ex. MX-7K2QH9
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id])
+  // pending_payment | preparing | enroute | arrived | ready | delivered | cancelled
+  status        String
+  reception     String // delivery | pickup
+  quartier      String
+  address       String
+  destLat       Float
+  destLng       Float
+  customerName  String
+  customerPhone String
+  subtotal      Int
+  fee           Int
+  total         Int
+  pin           String
+  pinAttempts   Int       @default(0)
+  riderId       Int?
+  rider         Rider?    @relation(fields: [riderId], references: [id])
+  riderBattery  Int       @default(90)
+  trackingMode  String    @default("sim") // sim (trajet simulé) | live (GPS du livreur)
+  routeJson     String?
+  rideStartAt   DateTime?
+  rideDurationMs Int?
+  readyAt       DateTime?
+  progress      Float     @default(0)
+  deliveredAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  items         OrderItem[]
+  payments      Payment[]
+  claims        Claim[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([riderId])
+}
+
+model OrderItem {
+  id        Int    @id @default(autoincrement())
+  orderId   Int
+  order     Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  name      String
+  emoji     String
+  price     Int
+  qty       Int
+}
+
+model Payment {
+  id            Int      @id @default(autoincrement())
+  orderId       Int
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  method        String // mobile | cod
+  operator      String? // mvola | orange | airtel
+  phone         String?
+  amount        Int
+  status        String // pending | paid | failed | cancelled
+  provider      String? // simulator | ...
+  providerRef   String?
+  txRef         String?
+  failureReason String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([orderId])
+}
+
+model Claim {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  orderId   Int?
+  order     Order?   @relation(fields: [orderId], references: [id])
+  orderCode String
+  type      String
+  message   String
+  phone     String
+  photoPath String?
+  status    String   @default("open")
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
